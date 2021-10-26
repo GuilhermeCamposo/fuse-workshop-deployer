@@ -1,0 +1,28 @@
+---
+- name: Delete CodeReady instance
+  command: "oc delete  checluster codeready-workspaces -n codeready"
+
+- name: Check if codeready was uninstalled
+  k8s:
+    state: absent
+    wait: true
+    api_version: org.eclipse.che/v1
+    kind: CheCluster
+    name: codeready-workspaces
+    namespace: codeready
+  register: r_codeready_cr
+
+- name: Delete CodeReady project
+  command: "oc delete  project codeready"
+
+- name: Delete Guides project
+  command: "oc delete project guides"
+
+- name: Delete Guides project
+  command: "oc delete project webapp"
+
+- name: Delete Users projects
+  command: "oc delete project user{{ item}}-project"
+  with_sequence: start=1 end={{ num_users }}
+  when:
+    - num_users|int > 0

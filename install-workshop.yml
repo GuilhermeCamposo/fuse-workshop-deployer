@@ -1,0 +1,76 @@
+- hosts: localhost
+  name: Install Fuse Workshop
+  vars:
+    delete_workshop: false
+    insecure_skip_tls_verify: true
+    ocp_username: opentlc-mgr
+    # CHE configuration
+    workshop_rhsso_admin_user_name: admin
+    workshop_rhsso_admin_password: admin
+    workshop_openshift_user_password: openshift
+    workshop_che_user_password: openshift
+    # provision_webapp
+    webapp_operator_release_tag: '0.0.63'
+    webapp_client_id: tutorial-web-app
+    fuse_workshop_webapp_group_name: dedicated-admins
+    fuse_workshop_webapp_operator_image: quay.io/redhatintegration/tutorial-web-app-operator:v0.0.63-workshop
+    webapp_operator_template_path: /home/tutorial-web-app-operator/deploy/template/tutorial-web-app.yml
+    webapp_namespace: "webapp"
+    webapp_operator_resources: 'https://github.com/integr8ly/tutorial-web-app-operator/archive/v{{webapp_operator_release_tag}}.zip'
+    webapp_operator_resource_items:
+      - rbac.yaml
+      - sa.yaml
+      - crd.yaml
+    webapp_walkthrough_locations:
+      - 'https://github.com/GuilhermeCamposo/fuse-workshop-doc'
+      - 'https://github.com/GuilhermeCamposo/camelk-workshop-doc'
+  tasks:
+
+    - name: Set Subdomain
+      set_fact:
+        route_subdomain: "apps.{{ domain }}"
+
+    - name: Set console_url
+      set_fact:
+        console_url: "https://console-openshift-console.{{ route_subdomain }}"
+
+    - name: login as super user with token on OpenShift 4
+      command: "oc login --token={{ ocp_token }}  --server=https://api.{{ domain }}:6443 --insecure-skip-tls-verify={{ insecure_skip_tls_verify }}"
+      when:
+       - ocp_token is defined
+       - ocp_token is not none
+       - ocp_token|trim() != ""
+      ignore_errors: no
+
+    - name: Provision Solution Explorer
+      include_tasks: tasks/provision_webapp.yml
+      when: not delete_workshop
+
+    - name: Provision CRW
+      include_tasks: tasks/provision_che.yml
+      when: not delete_workshop
+
+    - name: Provision AMQ Broker Operator
+      include_tasks: tasks/provision_amq.yml
+      with_sequence: start=1 end={{ num_users }}
+      when:
+        - num_users|int > 0
+        - not delete_workshop
+
+    - name: Provision Fuse Console Operator
+      with_sequence: start=1 end={{ num_users }}
+      when:
+        - num_users|int > 0
+        - not delete_workshop
+      include_tasks: tasks/provision_fuseconsole.yml
+
+    - name: Provision CamelK Operator
+      with_sequence: start=1 end={{ num_users }}
+      when:
+        - num_users|int > 0
+        - not delete_workshop
+      include_tasks: tasks/provision_camelk.yml
+
+    - name: Delete Workshop
+      include_tasks: tasks/delete_workshop.yml
+      when: delete_workshop

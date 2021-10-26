@@ -1,0 +1,15 @@
+---
+
+- name: Define User Project Name
+  set_fact:
+    user_project: 'user{{ item }}-project'
+
+- name: Evaluate AMQ Broker Operator Group
+  k8s:
+    state: present
+    resource_definition: "{{ lookup('template', 'operatorgroup.yml.j2') }}"
+
+- name: Evaluate AMQ Broker Subscription
+  k8s:
+    state: present
+    resource_definition: "{{ lookup('template', 'amq_subscription.yml.j2') }}"
