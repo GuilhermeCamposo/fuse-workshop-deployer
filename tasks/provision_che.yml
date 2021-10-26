@@ -17,10 +17,6 @@
   loop_control:
     loop_var: t_user
 
-- name: install username distribution
-  when: num_users | int > 0
-  include_tasks: install-username-distribution.yaml
-
 # Install CRW via operator
 - name: see if codeready is installed
   k8s_info:

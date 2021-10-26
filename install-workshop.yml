@@ -46,9 +46,15 @@
       include_tasks: tasks/provision_webapp.yml
       when: not delete_workshop
 
-    - name: Provision CRW
+    - name: Provision CodeReady Workspaces
       include_tasks: tasks/provision_che.yml
       when: not delete_workshop
+
+    - name: Install Username Distribution
+      when:
+        - num_users | int > 0
+        - not delete_workshop
+      include_tasks: tasks/install-username-distribution.yaml
 
     - name: Provision AMQ Broker Operator
       include_tasks: tasks/provision_amq.yml
@@ -70,6 +76,13 @@
         - num_users|int > 0
         - not delete_workshop
       include_tasks: tasks/provision_camelk.yml
+
+    - name: Installation Finished
+      when:
+        - num_users|int > 0
+        - not delete_workshop
+      debug:
+        msg: "Installation succesfully finished. User Distribution URL: https://{{ user_distribution_url }}"
 
     - name: Delete Workshop
       include_tasks: tasks/delete_workshop.yml

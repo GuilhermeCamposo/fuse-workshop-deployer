@@ -98,3 +98,15 @@
           termination: edge
           insecureEdgeTerminationPolicy: Allow
   register: Route
+
+- name: Get User Distribution Route
+  k8s_info:
+    kind: Route
+    name: get-a-username
+    namespace: guides
+    api_version: route.openshift.io/v1
+  register: user_distribution_route
+
+- name: Set user_distribution_url
+  set_fact:
+    user_distribution_url: "{{ user_distribution_route.resources[0].spec.host }}"
