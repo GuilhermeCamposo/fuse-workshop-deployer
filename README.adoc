@@ -38,7 +38,10 @@ You just need a updated browser, preferably Chrome or Firefox :)
 
 === Running the playbook
 
-    ansible-playbook -e ocp_token= -e domain=  -e num_users= install-workshop.yml
+    token=REPLACE_ME
+    server=REPLACE_ME
+    num_users=REPLACE_ME
+    ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} install-workshop.yml
 
 === Getting the user registration page
 
