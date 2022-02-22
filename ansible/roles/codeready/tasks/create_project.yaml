@@ -28,3 +28,20 @@
       - apiGroup: rbac.authorization.k8s.io
         kind: User
         name: "{{ t_user }}"
+
+- name: assign permissions for catalog reading for user {{ t_user }}
+  k8s:
+    state: present
+    kind: ClusterRoleBinding
+    api_version: rbac.authorization.k8s.io/v1
+    definition:
+      metadata:
+        name: '{{ t_user }}-reader'
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-reader
+      subjects:
+      - apiGroup: rbac.authorization.k8s.io
+        kind: User
+        name: "{{ t_user }}"

@@ -1,4 +1,35 @@
----
+- name: initialize username array
+  set_fact:
+    users: []
+
+- name: create usernames
+  set_fact:
+    users: "{{ users + ['user'+item | string] }}"
+  loop: "{{ range(1,((num_users | int) + 1)) | list }}"
+
+
+- name: create projects for users
+  include_tasks: create_project.yaml
+  vars:
+    t_project_name: "{{ t_user }}-project"
+  loop: "{{ users }}"
+  loop_control:
+    loop_var: t_user
+
+# Install CRW via operator
+- name: see if codeready is installed
+  k8s_info:
+    api_version: org.eclipse.che/v1
+    kind: CheCluster
+    name: codeready-workspaces
+    namespace: codeready
+  register: r_codeready_cr
+
+- name: show codeready cr
+  when: debug_enable
+  debug:
+    msg: "existing codeready project: {{ r_codeready_cr }}"
+
 - name: create codeready namespace
   k8s:
     state: present
@@ -41,9 +72,7 @@
     merge_type:
     - strategic-merge
     - merge
-    definition: "{{ lookup('file', item ) | from_yaml }}"
-  loop:
-  - ./files/codeready_cr.yaml
+    resource_definition: "{{ lookup('file', 'codeready_cr.yaml') }}"
 
 # wait for che to be up
 - name: wait for CRW to be running
@@ -53,7 +82,7 @@
   register: result
   until: result.status == 200
   retries: "120"
-  delay: "15"
+  delay: "30"
 
 - name: Get codeready keycloak deployment
   k8s_info:
@@ -63,6 +92,7 @@
   register: r_keycloak_deployment
 
 - name: show cr
+  when: debug_enable
   debug:
     msg: "existing keycloak deployment: {{ r_keycloak_deployment }}"
 
@@ -75,10 +105,12 @@
     codeready_sso_admin_password: "{{ r_keycloak_deployment.resources[0].spec.template.spec.containers[0].env | selectattr('name','equalto','SSO_ADMIN_PASSWORD') |map (attribute='value') | list | first }}"
 
 - name: show codeready keycloak admin username
+  when: debug_enable
   debug:
     msg: "codeready keycloak admin username: {{ codeready_sso_admin_username }}"
 
 - name: show codeready keycloak admin password
+  when: debug_enable
   debug:
     msg: "codeready keycloak admin password: {{ codeready_sso_admin_password }}"
 

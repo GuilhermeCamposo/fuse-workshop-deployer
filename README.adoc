@@ -41,7 +41,7 @@ You just need a updated browser, preferably Chrome or Firefox :)
     token=REPLACE_ME
     server=REPLACE_ME
     num_users=REPLACE_ME
-    ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} install-workshop.yml
+    ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} playbook.yml
 
 === Getting the user registration page
 

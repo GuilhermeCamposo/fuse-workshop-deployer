@@ -1,5 +1,3 @@
----
-
 - name: Define User Project Name
   set_fact:
     user_project: 'user{{ item }}-project'

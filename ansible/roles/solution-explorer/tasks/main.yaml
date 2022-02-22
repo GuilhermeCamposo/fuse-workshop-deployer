@@ -1,4 +1,3 @@
----
 - name: Evaluate {{ webapp_namespace }} namespace if not exists
   k8s:
     api_version: v1
@@ -6,26 +5,26 @@
     name: '{{ webapp_namespace }}'
     state: present
 
-- name: Set temp dir
-  set_fact:
-    webapp_operator_tmp: "/tmp/webapp-operator"
-
-- name: Ensure example directory exists
-  file:
-    path: '{{ webapp_operator_tmp }}'
-    state: directory
-
-- name: Download example files
-  unarchive:
-      src: '{{webapp_operator_resources}}'
-      dest: '{{ webapp_operator_tmp }}'
-      remote_src: yes
+# - name: Set temp dir
+#   set_fact:
+#     webapp_operator_tmp: "/tmp/webapp-operator"
+#
+# - name: Ensure example directory exists
+#   file:
+#     path: '{{ webapp_operator_tmp }}'
+#     state: directory
+#
+# - name: Download example files
+#   unarchive:
+#       src: '{{webapp_operator_resources}}'
+#       dest: '{{ webapp_operator_tmp }}'
+#       remote_src: yes
 
 - name: Create WebApp Operator Resources
   k8s:
     state: present
     namespace: '{{ webapp_namespace }}'
-    src: 'tutorial-webapp-operator/{{ item }}'
+    resource_definition: '{{ lookup("file",  item ) }}'
   loop: "{{ webapp_operator_resource_items }}"
 
 - name: Deploy custom Operator
@@ -33,10 +32,6 @@
     state: present
     namespace: '{{ webapp_namespace }}'
     resource_definition: '{{ lookup("template", "instructions_deploy.yml.j2") }}'
-
-# - name: Add additional walkthrough locations in the default list
-#   set_fact:
-#     webapp_walkthrough_locations: "{{ webapp_walkthrough_locations }}"
 
 - name: Create WebApp custom resource
   k8s:
