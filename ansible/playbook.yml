@@ -95,6 +95,7 @@
       debug:
         msg: "Installation finished succesfully. User Distribution URL: https://{{ user_distribution_url }}"
 
-    # - name: Delete Workshop
-    #   include_tasks: tasks/delete_workshop.yml
-    #   when: delete_workshop
+    - name: Delete Workshop
+      include_role:
+        name: delete
+      when: delete_workshop

@@ -5,21 +5,6 @@
     name: '{{ webapp_namespace }}'
     state: present
 
-# - name: Set temp dir
-#   set_fact:
-#     webapp_operator_tmp: "/tmp/webapp-operator"
-#
-# - name: Ensure example directory exists
-#   file:
-#     path: '{{ webapp_operator_tmp }}'
-#     state: directory
-#
-# - name: Download example files
-#   unarchive:
-#       src: '{{webapp_operator_resources}}'
-#       dest: '{{ webapp_operator_tmp }}'
-#       remote_src: yes
-
 - name: Create WebApp Operator Resources
   k8s:
     state: present

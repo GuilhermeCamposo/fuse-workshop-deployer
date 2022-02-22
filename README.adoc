@@ -12,10 +12,17 @@
 image::./images/resources.png[]
 
 
-=== OpenShift 4.8 Workshop
+=== OpenShift 4.9
 
-Use this environment to provision a OpenShift cluster with authentication for attendees. Take the above resource consumption as a base to calculate the amount of resource you will need for your workshop.
+This workshops requires a OpenShift environment with user already defined. They must be named as `user`+ `number`, like `user1`, and have the same password, `openshift`.
+Have as many as you need for your activity.
 
+Take the above resource consumption as a base to calculate the amount of resource you will need for your workshop.
+
+[NOTE]
+====
+This workshop is specifically tested with OCP 4.9. Older versions have API incompatibilities that will break the automation.
+====
 
 === CodeReady Workspaces
 
