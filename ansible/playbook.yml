@@ -11,17 +11,11 @@
     workshop_openshift_user_password: openshift
     workshop_che_user_password: openshift
     # provision_webapp
-    webapp_operator_release_tag: '0.0.63'
     webapp_client_id: tutorial-web-app
     fuse_workshop_webapp_group_name: dedicated-admins
-    fuse_workshop_webapp_operator_image: quay.io/redhatintegration/tutorial-web-app-operator:v0.0.63-workshop
-    webapp_operator_template_path: /home/tutorial-web-app-operator/deploy/template/tutorial-web-app.yml
+    webapp_image_tag: '1.0.10'
+    webapp_image: 'quay.io/gcamposo/tutorial-web-app:{{ webapp_image_tag }}'
     webapp_namespace: "webapp"
-    webapp_operator_resources: 'https://github.com/integr8ly/tutorial-web-app-operator/archive/v{{webapp_operator_release_tag}}.zip'
-    webapp_operator_resource_items:
-      - rbac.yaml
-      - sa.yaml
-      - crd.yaml
     webapp_walkthrough_locations:
       - 'https://github.com/GuilhermeCamposo/fuse-workshop-doc'
       - 'https://github.com/GuilhermeCamposo/camelk-workshop-doc'
@@ -29,7 +23,7 @@
 
     - name: Define domain
       set_fact:
-        domain : "{{ server | regex_replace('https://api.') | regex_replace(':6443')   }}"
+        domain : "{{ server | regex_replace('https://api.') | regex_replace(':6443') }}"
 
     - name: Set Subdomain
       set_fact:

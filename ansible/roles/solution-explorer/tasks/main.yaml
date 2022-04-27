@@ -1,27 +1,32 @@
-- name: Evaluate {{ webapp_namespace }} namespace if not exists
-  k8s:
+- name: Evaluate {{ webapp_namespace }} Project
     api_version: v1
     kind: Namespace
     name: '{{ webapp_namespace }}'
     state: present
 
-- name: Create WebApp Operator Resources
+- name: Evaluate Solution Explorer PVC
   k8s:
     state: present
     namespace: '{{ webapp_namespace }}'
-    resource_definition: '{{ lookup("file",  item ) }}'
-  loop: "{{ webapp_operator_resource_items }}"
+    resource_definition: '{{ lookup("file", "pvc.yml") }}'
 
-- name: Deploy custom Operator
+- name: Evaluate Solution Explorer DeploymentConfig
   k8s:
     state: present
     namespace: '{{ webapp_namespace }}'
-    resource_definition: '{{ lookup("template", "instructions_deploy.yml.j2") }}'
+    resource_definition: '{{ lookup("template", "deployment.yml.j2") }}'
 
-- name: Create WebApp custom resource
+- name: Evaluate Solution Explorer Service
   k8s:
     state: present
-    resource_definition: "{{ lookup('template', 'webapp.yml.j2') }}"
+    namespace: '{{ webapp_namespace }}'
+    resource_definition: '{{ lookup("file", "svc.yml") }}'
+
+- name: Evaluate Solution Explorer Route
+  k8s:
+    state: present
+    namespace: '{{ webapp_namespace }}'
+    resource_definition: '{{ lookup("file", "route.yml") }}'
 
 - name: Get webapp secure route
   k8s_info:
@@ -43,9 +48,4 @@
 - name: Create OpenShift OAuth client
   k8s:
     state: present
-    resource_definition: "{{ lookup('template', 'oauthclient.yml.j2') }}"
-
-- name: Create OpenShift Group
-  k8s:
-    state: present
-    resource_definition: "{{ lookup('template', 'instructions_group.yml.j2') }}"
+    resource_definition: "{{ lookup('template', 'oauth-client.yml.j2') }}"
