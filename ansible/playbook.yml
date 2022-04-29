@@ -87,7 +87,7 @@
         - num_users|int > 0
         - not delete_workshop
       debug:
-        msg: "Installation finished succesfully. User Distribution URL: https://{{ user_distribution_url }}"
+        msg: "Installation finished succesfully. User Distribution URL: https://{{ user_distribution_url }}. The password for every user is: {{ workshop_openshift_user_password }} "
 
     - name: Delete Workshop
       include_role:
