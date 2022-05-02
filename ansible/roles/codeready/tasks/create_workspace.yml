@@ -1,4 +1,3 @@
----
 - name: "Get Che user token"
   uri:
     url: https://keycloak-{{ workshop_che_namespace }}.{{ route_subdomain }}/auth/realms/codeready/protocol/openid-connect/token
@@ -16,7 +15,6 @@
   delay: 10
 
 ## to start workspace start-after-create=true
-
 - name: Create Fuse Workshop workspace for user from devfile
   uri:
     url: https://codeready-{{ workshop_che_namespace }}.{{ route_subdomain }}/api/workspace/devfile?start-after-create=true&namespace={{ user }}
@@ -25,7 +23,7 @@
     headers:
       Content-Type: application/json
       Authorization: "Bearer {{ user_token.json.access_token }}"
-    body: "{{ lookup('template', './templates/devfile.json.j2') }}"
+    body: "{{ lookup('template', 'fuse-devfile.json.j2') }}"
     body_format: json
     status_code: 201,409
   register: _result
@@ -41,7 +39,7 @@
     headers:
       Content-Type: application/json
       Authorization: "Bearer {{ user_token.json.access_token }}"
-    body: "{{ lookup('template', './templates/java11-devfile.json.j2') }}"
+    body: "{{ lookup('template', 'camel-k-devfile.json.j2') }}"
     body_format: json
     status_code: 201,409
   register: _result
