@@ -1,39 +1,39 @@
-- name: Evaluate {{ webapp_namespace }} Project
+- name: Evaluate {{ solution_explorer_namespace }} Project
   k8s:
     api_version: v1
     kind: Namespace
-    name: '{{ webapp_namespace }}'
+    name: '{{ solution_explorer_namespace }}'
     state: present
 
 - name: Evaluate Solution Explorer PVC
   k8s:
     state: present
-    namespace: '{{ webapp_namespace }}'
+    namespace: '{{ solution_explorer_namespace }}'
     resource_definition: '{{ lookup("file", "pvc.yml") }}'
 
 - name: Evaluate Solution Explorer DeploymentConfig
   k8s:
     state: present
-    namespace: '{{ webapp_namespace }}'
+    namespace: '{{ solution_explorer_namespace }}'
     resource_definition: '{{ lookup("template", "deployment.yml.j2") }}'
 
 - name: Evaluate Solution Explorer Service
   k8s:
     state: present
-    namespace: '{{ webapp_namespace }}'
+    namespace: '{{ solution_explorer_namespace }}'
     resource_definition: '{{ lookup("file", "svc.yml") }}'
 
 - name: Evaluate Solution Explorer Route
   k8s:
     state: present
-    namespace: '{{ webapp_namespace }}'
+    namespace: '{{ solution_explorer_namespace }}'
     resource_definition: '{{ lookup("file", "route.yml") }}'
 
 - name: Get webapp secure route
   k8s_info:
     kind: Route
-    name: '{{ webapp_client_id }}'
-    namespace: '{{ webapp_namespace }}'
+    name: '{{ solution_explorer_client_id }}'
+    namespace: '{{ solution_explorer_namespace }}'
     api_version: route.openshift.io/v1
   register: webapp_secure_route
   until: >-

@@ -47,13 +47,13 @@ spec:
                   apiVersion: v1
                   fieldPath: metadata.namespace
             - name: OPENSHIFT_OAUTHCLIENT_ID
-              value: "{{ webapp_client_id }}"
+              value: "{{ solution_explorer_client_id }}"
             - name: NODE_ENV
               value: production
             - name: WALKTHROUGH_LOCATIONS
-              value: "{{ webapp_walkthrough_locations|join(',') }}"
+              value: "{{ solution_explorer_walkthrough_locations|join(',') }}"
             - name: INTEGREATLY_VERSION
-              value: "{{ webapp_image_tag }}"
+              value: "{{ solution_explorer_image_tag }}"
             - name: DATABASE_LOCATION
               value: /opt/user-walkthroughs
             - name: INSTALLED_SERVICES
@@ -75,7 +75,7 @@ spec:
             - name: user-walkthroughs
               mountPath: /opt/user-walkthroughs
           terminationMessagePolicy: File
-          image: '{{ webapp_image }}'
+          image: '{{ solution_explorer_image }}'
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst

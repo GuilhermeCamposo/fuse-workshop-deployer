@@ -10,13 +10,13 @@
     workshop_rhsso_admin_password: admin
     workshop_openshift_user_password: openshift
     workshop_che_user_password: openshift
+    workshop_che_namespace: workshop-codeready
     # provision_webapp
-    webapp_client_id: tutorial-web-app
-    fuse_workshop_webapp_group_name: dedicated-admins
-    webapp_image_tag: '1.0.10'
-    webapp_image: 'quay.io/gcamposo/tutorial-web-app:{{ webapp_image_tag }}'
-    webapp_namespace: "webapp"
-    webapp_walkthrough_locations:
+    solution_explorer_client_id: tutorial-web-app
+    solution_explorer_image_tag: '1.0.10'
+    solution_explorer_image: 'quay.io/gcamposo/tutorial-web-app:{{ solution_explorer_image_tag }}'
+    solution_explorer_namespace: "workshop-solution-explorer"
+    solution_explorer_walkthrough_locations:
       - 'https://github.com/GuilhermeCamposo/fuse-workshop-doc'
       - 'https://github.com/GuilhermeCamposo/camelk-workshop-doc'
   tasks:
@@ -46,17 +46,17 @@
         name: solution-explorer
       when: not delete_workshop
 
-    - name: Provision CodeReady Workspaces
-      include_role:
-        name: codeready
-      when: not delete_workshop
-
     - name: Include Username Distribution
       when:
         - num_users | int > 0
         - not delete_workshop
       include_role:
         name: username-distribution
+
+    - name: Provision CodeReady Workspaces
+      include_role:
+        name: codeready
+      when: not delete_workshop
 
     - name: Provision AMQ Broker Operator
       include_role:
@@ -92,4 +92,4 @@
     - name: Delete Workshop
       include_role:
         name: delete
-      when: delete_workshop
+      when: delete_workshop|bool

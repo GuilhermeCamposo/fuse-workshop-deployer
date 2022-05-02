@@ -1,9 +1,7 @@
----
 apiVersion: org.eclipse.che/v1
 kind: CheCluster
 metadata:
   name: codeready-workspaces
-  namespace: codeready
 spec:
   server:
     cheImageTag: ''

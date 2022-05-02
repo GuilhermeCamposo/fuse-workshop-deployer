@@ -1,28 +1,22 @@
-- name: create guides project
+- name: Evaluate {{ solution_explorer_namespace }} project
   when: num_users | int > 0
   k8s:
-    state: present
-    kind: Project
-    api_version: project.openshift.io/v1
-    definition:
-      metadata:
-        name: "guides"
-        annotations:
-          openshift.io/description: ""
-          openshift.io/display-name: "Fuse Workshop Guides"
+    api_version: v1
+    kind: Namespace
+    name: '{{ solution_explorer_namespace }}'
 
 - name: search for username distribution tool
   k8s_info:
     kind: DeploymentConfig
     name: get-a-username
-    namespace: guides
+    namespace: '{{ solution_explorer_namespace }}'
   register: r_gau_dc
 
 - name: search for Redis
   k8s_info:
     kind: DeploymentConfig
     name: redis
-    namespace: guides
+    namespace: '{{ solution_explorer_namespace }}'
   register: r_redis_dc
 
 - name: Deploy Redis
@@ -36,7 +30,7 @@
     -p VOLUME_CAPACITY=1Gi
     -p MEMORY_LIMIT=1Gi
     -p REDIS_VERSION=5
-    | oc create -n guides  -f -
+    | oc create -n {{ solution_explorer_namespace }}  -f -
   args:
     stdin: "{{ lookup('file', 'redis-template.yaml') }}"
 
@@ -45,7 +39,7 @@
   k8s_info:
     api_version: v1
     kind: Pod
-    namespace: guides
+    namespace: '{{ solution_explorer_namespace }}'
     label_selectors:
       - name = redis
       - deploymentconfig = redis
@@ -59,7 +53,7 @@
 - name: Deploy username distribution tool
   when: r_gau_dc.resources | list | length == 0
   shell: >
-    oc -n guides new-app --as-deployment-config quay.io/openshiftlabs/username-distribution:1.4 --name=get-a-username
+    oc -n {{ solution_explorer_namespace }} new-app --as-deployment-config quay.io/openshiftlabs/username-distribution:1.4 --name=get-a-username
     -e LAB_REDIS_HOST=redis
     -e LAB_REDIS_PASS=redis
     -e LAB_TITLE={{ 'Fuse Workshop' | quote }}
@@ -71,13 +65,13 @@
     -e LAB_USER_PAD_ZERO=false
     -e LAB_ADMIN_PASS={{ workshop_openshift_user_password }}
     -e LAB_MODULE_URLS='https://{{ webapp_secure_route }};Solution Explorer'
-    -e LAB_EXTRA_URLS='{{console_url}};OpenShift Console,https://codeready-codeready.{{ route_subdomain}};CodeReady Workspaces Console'
+    -e LAB_EXTRA_URLS='{{console_url}};OpenShift Console,https://codeready-{{ solution_explorer_namespace }}.{{ route_subdomain}};CodeReady Workspaces Console'
 
 - name: expose username distribution tool
   when: r_gau_dc.resources | list | length == 0
   k8s:
     api_version: route.openshift.io/v1
-    namespace: guides
+    namespace: '{{ solution_explorer_namespace }}'
     state: present
     kind: Route
     definition:
@@ -102,10 +96,27 @@
   k8s_info:
     kind: Route
     name: get-a-username
-    namespace: guides
+    namespace: '{{ solution_explorer_namespace }}'
     api_version: route.openshift.io/v1
   register: user_distribution_route
 
 - name: Set user_distribution_url
   set_fact:
     user_distribution_url: "{{ user_distribution_route.resources[0].spec.host }}"
+
+- name: initialize username array
+  set_fact:
+    users: []
+
+- name: create usernames
+  set_fact:
+    users: "{{ users + ['user'+item | string] }}"
+  loop: "{{ range(1,((num_users | int) + 1)) | list }}"
+
+- name: create projects for users
+  include_tasks: create_project.yaml
+  vars:
+    t_project_name: "{{ t_user }}-project"
+  loop: "{{ users }}"
+  loop_control:
+    loop_var: t_user

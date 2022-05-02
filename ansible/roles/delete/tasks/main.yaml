@@ -1,5 +1,5 @@
 - name: Delete CodeReady instance
-  command: "oc delete checluster codeready-workspaces -n codeready"
+  command: "oc delete checluster codeready-workspaces -n {{ workshop_che_namespace }}"
 
 - name: Check if codeready was uninstalled
   k8s:
@@ -8,17 +8,14 @@
     api_version: org.eclipse.che/v1
     kind: CheCluster
     name: codeready-workspaces
-    namespace: codeready
+    namespace: '{{ workshop_che_namespace }}'
   register: r_codeready_cr
 
 - name: Delete CodeReady project
-  command: "oc delete project codeready"
+  command: "oc delete project {{ workshop_che_namespace }}"
 
-- name: Delete Guides project
-  command: "oc delete project guides"
-
-- name: Delete {{ webapp_namespace }} project
-  command: "oc delete project {{ webapp_namespace }}"
+- name: Delete {{ solution_explorer_namespace }} project
+  command: "oc delete project {{ solution_explorer_namespace }}"
 
 - name: Delete Users projects
   command: "oc delete project user{{ item }}-project"
