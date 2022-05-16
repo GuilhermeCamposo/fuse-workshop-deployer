@@ -25,7 +25,7 @@
       set_fact:
         domain : "{{ server | regex_replace('https://api.') | regex_replace(':6443') }}"
 
-    - name: Set Subdomain
+    - name: Set route_subdomain
       set_fact:
         route_subdomain: "apps.{{ domain }}"
 
