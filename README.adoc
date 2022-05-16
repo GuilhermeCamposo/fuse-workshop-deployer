@@ -1,13 +1,13 @@
 = Red Hat Fuse Workshop Deployer
+:toc:
+:toc-placement!:
 
 Ansibe automation to the deploy Red Hat Fuse Workshop.
 
-:toc: macro
-:toclevels: 1
-:status:
-:!toc-title:
+toc::[]
 
 == Labs Content
+
 
 - https://github.com/GuilhermeCamposo/fuse-workshop-doc[Fuse with Spring Boot]
 - https://github.com/GuilhermeCamposo/camelk-workshop-doc[Camel K]
