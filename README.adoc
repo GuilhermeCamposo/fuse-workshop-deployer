@@ -39,7 +39,7 @@ image::./images/resources.png[Resource Consumption]
 You just need an updated browser, preferably Chrome or Firefox :)
 
 
-== Install The Workshop Using Ansible
+== Using the Ansible playbook
 
 === Parameters
 
@@ -62,10 +62,16 @@ server=REPLACE_ME
 num_users=REPLACE_ME
 ----
 
-- Run the playbook:
+=== Install the Workshop
 
 ----
 ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} playbook.yml
+----
+
+=== Delete the workshop:
+
+----
+ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} -e delete_workshop=true playbook.yml
 ----
 
 === Getting the user registration page

@@ -6,3 +6,19 @@
   k8s:
     state: present
     resource_definition: "{{ lookup('template', 'camelk_subscription.yml.j2') }}"
+
+- name: Wait for Operator to be Running
+  k8s_info:
+    api_version: v1
+    kind: Pod
+    namespace: '{{ user_project }}'
+    label_selectors:
+      - app = camel-k
+      - camel.apache.org/component = operator
+      - name = camel-k-operator
+    field_selectors:
+      - status.phase=Running
+  register: r_camelk_operator_pod
+  retries: 120
+  delay: 10
+  until: r_camelk_operator_pod.resources | list | length == 1
