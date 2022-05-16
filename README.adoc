@@ -2,7 +2,10 @@
 
 Ansibe automation to the deploy Red Hat Fuse Workshop.
 
-:toc:
+:toc: macro
+:toclevels: 1
+:status:
+:!toc-title:
 
 == Labs Content
 
