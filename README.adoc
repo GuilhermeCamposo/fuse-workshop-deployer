@@ -1,20 +1,23 @@
 = Red Hat Fuse Workshop Deployer
 
-== Lab Content
+Ansibe automation to the deploy Red Hat Fuse Workshop.
 
-. https://github.com/GuilhermeCamposo/fuse-workshop-doc[Fuse with Spring Boot]
-. https://github.com/GuilhermeCamposo/camelk-workshop-doc[Camel K]
+:toc:
 
-== Pre Requirements
+== Labs Content
 
-=== Resource Consumption per User
+- https://github.com/GuilhermeCamposo/fuse-workshop-doc[Fuse with Spring Boot]
+- https://github.com/GuilhermeCamposo/camelk-workshop-doc[Camel K]
 
-image::./images/resources.png[]
-
+== Requirements
 
 === OpenShift 4.9
 
-This workshops requires a OpenShift environment with user already defined. They must be named as `user`+ `number`, like `user1`, and have the same password, `openshift`.
+This workshops requires a OpenShift environment with users already defined, they must:
+
+- be named as `user + number`, like `user1`
+- have the same password: `openshift`.
+
 Have as many as you need for your activity.
 
 Take the above resource consumption as a base to calculate the amount of resource you will need for your workshop.
@@ -24,10 +27,13 @@ Take the above resource consumption as a base to calculate the amount of resourc
 This workshop is specifically tested with OCP 4.9. Older versions have API incompatibilities that will break the automation.
 ====
 
+=== Resource Consumption per User
+
+image::./images/resources.png[Resource Consumption]
+
 === CodeReady Workspaces
 
-You just need a updated browser, preferably Chrome or Firefox :)
-
+You just need an updated browser, preferably Chrome or Firefox :)
 
 
 == Install The Workshop Using Ansible
@@ -37,19 +43,30 @@ You just need a updated browser, preferably Chrome or Firefox :)
 [options="header"]
 |=======================
 | Parameter | Example Value                                      | Definition
-| ocp_token | sha256~vFanQbthlPKfsaldJT3bdLXIyEkd7ypO_XPygY1DNtQ | access token for a user with cluster-admin previleges
-| domain    | my-cluster.company.com                             | Cluster domain. If you have a console url like this https://console-openshift-console.apps.my-cluster.company.com, your domain is my-cluster.company.com.
-| num_users | 8                                                  | Number of users expected in the workshop. Please, have in mind that the more users you have, more resources you are going to need from the cluster.
-| delete_workshop | false | Only use this parameter if you intend to delete the installation and preserve the cluster
+| ocp_token | sha256~vFanQbthlPKfsaldJT3bdLXIyEkd7ypO_XPygY1DNtQ | Access token for a user with cluster-admin privileges.
+| domain    | my-cluster.company.com                             | The cluster's domain. If you have a console URL like this https://console-openshift-console.apps.my-cluster.company.com, your domain is `my-cluster.company.com`.
+| num_users | 8                                                  | Number of users attending the workshop. Have in mind that the more users you have, more resources you are going to need from the cluster.
+| delete_workshop | false | Only use this parameter if you intend to delete the installation and preserve the cluster.
 |=======================
 
 === Running the playbook
 
-    token=REPLACE_ME
-    server=REPLACE_ME
-    num_users=REPLACE_ME
-    ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} playbook.yml
+- Replace the environment variable values:
+
+----
+token=REPLACE_ME
+server=REPLACE_ME
+num_users=REPLACE_ME
+----
+
+- Run the playbook:
+
+----
+ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} playbook.yml
+----
 
 === Getting the user registration page
 
 The URL will be displayed by the `Installation Finished` task.
+
+image::./images/user-distribution-console.PNG[User Distribution]
