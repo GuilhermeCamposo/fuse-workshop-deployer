@@ -1,0 +1,12 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kamelet-view-user{{ item }}
+subjects:
+  - kind: User
+    apiGroup: rbac.authorization.k8s.io
+    name: user{{ item }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kamelets.camel.apache.org-v1alpha1-view

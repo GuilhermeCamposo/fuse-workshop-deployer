@@ -103,7 +103,7 @@
         {
           "type": "exec",
           "component": "tools",
-          "command": "mvn clean fabric8:deploy -P openshift -DskipTests -Dspring.profiles.active=prod -Dfabric8.generator.from=fuse7-java-openshift:1.7 \n",
+          "command": "mvn clean oc:deploy -P openshift -Dspring.profiles.active=prod -Djkube.generator.from=default-route-openshift-image-registry.{{ route_subdomain }}/openshift/fuse7-java-openshift:1.7 \n",
           "workdir": "${CHE_PROJECTS_ROOT}/fuse-workshop"
         }
       ]
