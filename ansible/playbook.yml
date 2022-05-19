@@ -16,10 +16,25 @@
     solution_explorer_image_tag: '1.0.10'
     solution_explorer_image: 'quay.io/gcamposo/tutorial-web-app:{{ solution_explorer_image_tag }}'
     solution_explorer_namespace: "workshop-solution-explorer"
-    solution_explorer_walkthrough_locations:
-      - 'https://github.com/GuilhermeCamposo/fuse-workshop-doc'
-      - 'https://github.com/GuilhermeCamposo/camelk-workshop-doc'
+    module_fuse: true
+    module_camel_k: false
   tasks:
+    - name: Define Module
+      when:
+        - module_fuse|bool
+        - module_camel_k|bool
+      set_fact:
+        solution_explorer_walkthrough_locations:
+          - 'https://github.com/GuilhermeCamposo/fuse-workshop-doc'
+          - 'https://github.com/GuilhermeCamposo/camelk-workshop-doc'
+
+    - name: Define Module
+      when:
+        - module_fuse|bool
+        - not module_camel_k
+      set_fact:
+        solution_explorer_walkthrough_locations:
+          - 'https://github.com/GuilhermeCamposo/fuse-workshop-doc'
 
     - name: Define domain
       set_fact:
@@ -79,6 +94,7 @@
       when:
         - num_users|int > 0
         - not delete_workshop
+        - module_camel_k|bool
       include_role:
         name: camel-k
 

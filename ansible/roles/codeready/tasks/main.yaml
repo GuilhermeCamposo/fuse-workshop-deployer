@@ -46,7 +46,7 @@
     resource_definition: "{{ lookup('file', 'codeready_cr.yaml') }}"
 
 # wait for che to be up
-- name: wait for CRW to be running
+- name: Wait for CRW to be running
   uri:
     url: https://codeready-{{ workshop_che_namespace }}.{{ route_subdomain }}/dashboard/
     validate_certs: false
@@ -85,13 +85,13 @@
   debug:
     msg: "codeready keycloak admin password: {{ codeready_sso_admin_password }}"
 
-- name: create codeready users
+- name: Create Codeready Users
   include_tasks: add_che_user.yaml
   vars:
     user: "{{ item }}"
   with_list: "{{ users }}"
 
-- name: Get codeready SSO admin token
+- name: Get Codeready SSO admin token
   uri:
     url: https://keycloak-{{ workshop_che_namespace }}.{{ route_subdomain }}/auth/realms/master/protocol/openid-connect/token
     validate_certs: false
@@ -105,7 +105,7 @@
     status_code: 200,201,204
   register: codeready_sso_admin_token
 
-- name: Increase codeready access token lifespans
+- name: Increase Codeready access token lifespans
   uri:
     url: https://keycloak-{{ workshop_che_namespace }}.{{ route_subdomain }}/auth/admin/realms/codeready
     validate_certs: false
@@ -122,28 +122,28 @@
     body_format: json
     status_code: 204
 
-- name: Import stack imagestream
-  k8s:
-    state: present
-    merge_type:
-    - strategic-merge
-    - merge
-    definition: "{{ lookup('file', item ) | from_yaml }}"
-  loop:
-  - ./files/stack_imagestream.yaml
+# - name: Import stack imagestream
+#   k8s:
+#     state: present
+#     merge_type:
+#     - strategic-merge
+#     - merge
+#     definition: "{{ lookup('file', item ) | from_yaml }}"
+#   loop:
+#   - ./files/stack_imagestream.yaml
 
-- name: wait for stack to be a thing
-  k8s_info:
-    kind: ImageStream
-    name: quarkus-stack
-    namespace: openshift
-  register: r_stack_is
-  retries: 200
-  delay: 10
-  until: r_stack_is.resources | list | length == 1
-
-- name: import stack image
-  shell: oc import-image --all quarkus-stack -n openshift
+# - name: wait for stack to be a thing
+#   k8s_info:
+#     kind: ImageStream
+#     name: quarkus-stack
+#     namespace: openshift
+#   register: r_stack_is
+#   retries: 200
+#   delay: 10
+#   until: r_stack_is.resources | list | length == 1
+#
+# - name: import stack image
+#   shell: oc import-image --all quarkus-stack -n openshift
 
 - name: Create and pre-warm user workspaces
   include_tasks: create_workspace.yml
