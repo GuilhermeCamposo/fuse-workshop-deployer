@@ -65,13 +65,13 @@ num_users=REPLACE_ME
 === Install the Workshop
 
 ----
-ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} playbook.yml
+ansible-playbook -e token=${token} -e server=${server} -e num_users=${num_users} playbook.yml
 ----
 
 === Delete the workshop:
 
 ----
-ansible-playbook -e token=${token} -e server=${server}  -e num_users=${num_users} -e delete_workshop=true playbook.yml
+ansible-playbook -e token=${token} -e server=${server} -e num_users=${num_users} -e delete_workshop=true playbook.yml
 ----
 
 === Getting the user registration page

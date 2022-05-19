@@ -1,5 +1,5 @@
 # Install CRW via operator
-- name: create codeready namespace
+- name: Evaluate {{ workshop_che_namespace }} namespace
   k8s:
     state: present
     kind: Project
@@ -25,7 +25,7 @@
     resource_definition: "{{ lookup('file', 'codeready_subscription.yaml') }}"
 
 # wait for CRD to be a thing
-- name: Wait for CodeReady CRD to be ready
+- name: Wait for CodeReady CRD to be Ready
   k8s_info:
     api_version: apiextensions.k8s.io/v1
     kind: CustomResourceDefinition
@@ -55,7 +55,7 @@
   retries: "120"
   delay: "30"
 
-- name: Get codeready keycloak deployment
+- name: Get CodeReady keycloak deployment
   k8s_info:
     kind: Deployment
     namespace: '{{ workshop_che_namespace }}'
@@ -105,7 +105,7 @@
     status_code: 200,201,204
   register: codeready_sso_admin_token
 
-- name: Increase Codeready access token lifespans
+- name: Increase CodeReady access token lifespans
   uri:
     url: https://keycloak-{{ workshop_che_namespace }}.{{ route_subdomain }}/auth/admin/realms/codeready
     validate_certs: false
@@ -129,3 +129,7 @@
   with_list: "{{ users }}"
   when:
     - num_users|int > 0
+
+- name: Import Fuse Base Image
+  command: "oc import-image {{ fuse_base_image }}:{{ fuse_base_image_tag }} --from={{ fuse_base_image_repo }}/{{ fuse_base_image }}:{{ fuse_base_image_tag }} --confirm -n openshift"
+  ignore_errors: no
